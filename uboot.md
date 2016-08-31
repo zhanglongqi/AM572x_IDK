@@ -1,3 +1,111 @@
+uEnv.txt:
+```
+autoload=no
+ipaddr=192.168.1.100
+serverip=192.168.1.13
+gatewayip=192.168.1.1
+staticip=${ipaddr}:${serverip}:${gatewayip}:255.255.255.0:::off
+bootpath=/tftpboot
+rootfspath=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.00.00.04/targetNFS
+
+#setting for kernel loading
+kernel_addr=0x82000000
+fdt_addr=0x88000000
+
+nfs_args=setenv bootargs console=ttyO0,115200n8 root=/dev/nfs rw nfsroot=${serverip}:${rootfspath} ip=${staticip}
+load_zimage=tftp ${kernel_addr} ${bootpath}/zImage
+loadfdt=tftp ${fdt_addr} ${bootpath}/am572x-idk.dtb
+boot_zimage=bootz ${kernel_addr} - ${fdt_addr}
+uenvcmd=run load_zimage; run loadfdt; run nfs_args; run boot_zimage
+
+```
+
+This is the terminal output.
+```
+U-Boot SPL 2016.05-00230-ge9ef52a-dirty (Aug 30 2016 - 18:40:04)
+DRA752-GP ES2.0
+Trying to boot from MMC1
+reading args
+spl_load_image_fat_os: error reading image args, err - -1
+reading u-boot.img
+reading u-boot.img
+reading u-boot.img
+reading u-boot.img
+
+
+U-Boot 2016.05-00230-ge9ef52a-dirty (Aug 30 2016 - 18:40:04 +0800)
+
+CPU  : DRA752-GP ES2.0
+Model: TI AM5728 IDK
+Board: AM572x IDK REV 1.3B
+I2C:   ready
+DRAM:  2 GiB
+MMC:   OMAP SD/MMC: 0, OMAP SD/MMC: 1
+reading uboot.env
+
+** Unable to read "uboot.env" from mmc0:1 **
+Using default environment
+
+SCSI:  SATA link 0 timeout.
+AHCI 0001.0300 32 slots 1 ports 3 Gbps 0x1 impl SATA mode
+flags: 64bit ncq stag pm led clo only pmp pio slum part ccc apst 
+scanning bus for devices...
+Found 0 device(s).
+Net:   
+Warning: ethernet@48484000 using MAC address from ROM
+eth0: ethernet@48484000
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+SD/MMC found on device 0
+reading boot.scr
+** Unable to read file boot.scr **
+reading uEnv.txt
+1214 bytes read in 4 ms (295.9 KiB/s)
+Loaded env from uEnv.txt
+Importing environment from mmc0 ...
+Running uenvcmd ...
+ethernet@48484000 Waiting for PHY auto negotiation to complete. done
+link up on port 0, speed 100, full duplex
+Using ethernet@48484000 device
+TFTP from server 192.168.1.13; our IP address is 192.168.1.100
+Filename '/tftpboot/zImage'.
+Load address: 0x82000000
+Loading: #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 ##################
+	 420.9 KiB/s
+done
+Bytes transferred = 3750160 (393910 hex)
+link up on port 0, speed 100, full duplex
+Using ethernet@48484000 device
+TFTP from server 192.168.1.13; our IP address is 192.168.1.100
+Filename '/tftpboot/am572x-idk.dtb'.
+Load address: 0x88000000
+Loading: ####################
+	 991.2 KiB/s
+done
+Bytes transferred = 99552 (184e0 hex)
+Kernel image @ 0x82000000 [ 0x000000 - 0x393910 ]
+## Flattened Device Tree blob at 88000000
+   Booting using the fdt blob at 0x88000000
+   Loading Device Tree to 8ffe4000, end 8ffff4df ... OK
+
+Starting kernel ...
+
+
+```
+This is the output of printenv.
+```
 arch=arm
 args_mmc=run finduuid;setenv bootargs console=${console} ${optargs} root=PARTUUID=${uuid} rw rootfstype=${mmcrootfstype}
 baudrate=115200
@@ -57,3 +165,4 @@ ver=U-Boot 2016.05-00230-ge9ef52a-dirty (Aug 30 2016 - 18:40:04 +0800)
 vram=16M
 
 Environment size: 3624/65532 bytes
+```
